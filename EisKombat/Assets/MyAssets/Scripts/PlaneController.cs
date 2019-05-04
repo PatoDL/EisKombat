@@ -8,6 +8,10 @@ public class PlaneController : MonoBehaviour
     [SerializeField] private float planeSpeed;
     [SerializeField] private Rigidbody rig;
     [SerializeField] private float yaw, pitch, vSpeed, hSpeed;
+    [SerializeField] private float bulletSpeed;
+    public float life;
+    public GameObject bulletPF;
+    private float bulletTimer = 0f;
     bool accelerate = true;
 
     void Start()
@@ -19,6 +23,8 @@ public class PlaneController : MonoBehaviour
         pitch = 0.0f;
         vSpeed = 2.0f;
         hSpeed = 2.0f;
+        life = 100f;
+        bulletSpeed = 1950;
     }
 
     void Update()
@@ -33,23 +39,9 @@ public class PlaneController : MonoBehaviour
             transform.Rotate(0, 0, -value);
         }
 
-        if (Input.GetKey(KeyCode.W))
+        if(Input.GetMouseButton(0))
         {
-            if (accelerate)
-            {
-                rig.AddForce(transform.forward * planeSpeed, ForceMode.Acceleration);
-                accelerate = false;
-            }
-            else
-            {
-                rig.AddForce(transform.forward * planeSpeed, ForceMode.Force);
-            }
-        }
-        
-
-        if(Input.GetKey(KeyCode.S))
-        {
-            rig.AddForce(-transform.forward * planeSpeed / 2, ForceMode.Force);
+            Shoot();
         }
 
         if(Input.GetKeyUp(KeyCode.W))
@@ -75,7 +67,40 @@ public class PlaneController : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, 18.67f, transform.position.z);
         }
+    }
 
-        
+    void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (accelerate)
+            {
+                rig.AddForce(transform.forward * planeSpeed, ForceMode.Acceleration);
+                accelerate = false;
+            }
+            else
+            {
+                rig.AddForce(transform.forward * planeSpeed, ForceMode.Force);
+            }
+        }
+
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            rig.AddForce(-transform.forward * planeSpeed, ForceMode.Force);
+        }
+    }
+
+    void Shoot()
+    {
+        bulletTimer += Time.deltaTime;
+        if (bulletTimer > 0.5f)
+        {
+            GameObject bullet = Instantiate(bulletPF);
+            bullet.transform.position = transform.position + transform.forward * 10;
+            bullet.transform.rotation = transform.rotation;
+            bullet.GetComponentInChildren<Rigidbody>().AddForce(bullet.transform.forward * bulletSpeed, ForceMode.Force);
+            bulletTimer = 0f;
+        }
     }
 }
