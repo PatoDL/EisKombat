@@ -67,6 +67,11 @@ public class PlaneController : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, 18.67f, transform.position.z);
         }
+
+        if(life<=0f)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     void FixedUpdate()
@@ -99,7 +104,7 @@ public class PlaneController : MonoBehaviour
             GameObject bullet = Instantiate(bulletPF);
             bullet.transform.position = transform.position + transform.forward * 10;
             bullet.transform.rotation = transform.rotation;
-            bullet.GetComponentInChildren<Rigidbody>().AddForce(bullet.transform.forward * bulletSpeed, ForceMode.Force);
+            bullet.GetComponentInChildren<Rigidbody>().AddForce((bullet.transform.forward+transform.forward) * (bulletSpeed + planeSpeed), ForceMode.Force);
             bulletTimer = 0f;
         }
     }

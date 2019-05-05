@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
@@ -17,12 +15,11 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] float timer;
     GameObject plane;
     public GameObject bulletPF;
+    public float life = 50f;
 
-    const int cantBullets = 1000;
+    public GameObject explosion;
 
     float bulletTimer;
-
-    GameObject[] bullets = new GameObject[cantBullets];
 
     public float bulletVel;
 
@@ -53,6 +50,12 @@ public class EnemyBehaviour : MonoBehaviour
             if(state!=States.attack)
             state = States.attack;
         }
+
+        if(life<=0f)
+        {
+            Instantiate(explosion);
+            Destroy(this.gameObject);
+        }
     }
 
     void FixedUpdate()
@@ -77,7 +80,7 @@ public class EnemyBehaviour : MonoBehaviour
                 GameObject bullet = Instantiate(bulletPF);
                 bullet.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
                 bullet.transform.rotation = transform.rotation;
-                bullet.GetComponentInChildren<Rigidbody>().AddForce(bullet.transform.forward * bulletVel, ForceMode.Force);
+                bullet.GetComponentInChildren<Rigidbody>().AddForce((bullet.transform.forward+transform.forward) * (bulletVel+force), ForceMode.Force);
                 bulletTimer = 0f;
             }
         }

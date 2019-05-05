@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletDestroy : MonoBehaviour
 {
     float timer = 0f;
-
+    
     void Update()
     {
         timer += Time.deltaTime;
@@ -21,6 +21,11 @@ public class BulletDestroy : MonoBehaviour
         if(col.gameObject.name == "AircraftFuselage")
         {
             col.gameObject.GetComponent<PlaneController>().life -= 5f;
+        }
+
+        if(col.gameObject.name == "Enemy(Clone)" || col.gameObject.name == "Enemy")
+        {
+            col.gameObject.GetComponent<EnemyBehaviour>().life -= 10f;
         }
 
         Destroy(this.gameObject);

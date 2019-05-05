@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6488251216520126101}
   - component: {fileID: 5658595973750821867}
   - component: {fileID: 3704360350325629394}
+  - component: {fileID: 3147390979333764540}
   m_Layer: 0
   m_Name: BulletPF
   m_TagString: Untagged
@@ -109,6 +110,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3147390979333764540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941158240667313211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8001ccedd36da4190cb2ddf6ed64de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
 --- !u!1 &1890943810185279973
 GameObject:
   m_ObjectHideFlags: 0
