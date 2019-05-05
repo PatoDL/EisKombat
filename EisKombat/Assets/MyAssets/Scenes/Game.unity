@@ -496,6 +496,24 @@ Transform:
   m_Father: {fileID: 726517400}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &573223532 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1890943810185279973, guid: 0dc00584467d20b438c3e29ddec07437,
+    type: 3}
+  m_PrefabInstance: {fileID: 2766826069547981200}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &573223534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573223532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8001ccedd36da4190cb2ddf6ed64de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &609791516
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,6 +745,10 @@ MonoBehaviour:
   pitch: 0
   vSpeed: 0
   hSpeed: 0
+  bulletSpeed: 0
+  life: 0
+  bulletPF: {fileID: 1890943810185279973, guid: 0dc00584467d20b438c3e29ddec07437,
+    type: 3}
 --- !u!54 &1824657633
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -835,6 +857,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5658595973750821867, guid: 0dc00584467d20b438c3e29ddec07437,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0dc00584467d20b438c3e29ddec07437, type: 3}
 --- !u!1001 &2836692643038353583
@@ -929,6 +956,8 @@ MonoBehaviour:
   timer: 0
   bulletPF: {fileID: 1890943810185279973, guid: 0dc00584467d20b438c3e29ddec07437,
     type: 3}
+  life: 50
+  explosion: {fileID: 100010, guid: 031d08f52af1daa4f929b85221519426, type: 3}
   bulletVel: 0
 --- !u!136 &6136997011580875187
 CapsuleCollider:
@@ -938,12 +967,12 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6136997011580875185}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 4.21456
-  m_Height: 18.952852
+  m_Height: 19.153873
   m_Direction: 2
-  m_Center: {x: 0.3818097, y: 1.9733005, z: 0.7556467}
+  m_Center: {x: 0.3818097, y: 1.9733005, z: 0.8561573}
 --- !u!54 &6136997011580875188
 Rigidbody:
   m_ObjectHideFlags: 0
