@@ -8,26 +8,15 @@ public class BulletDestroy : MonoBehaviour
     
     void Update()
     {
-        timer += Time.deltaTime;
-
-        if(timer>20f)
+        if(timer>5f)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
         }
+        timer += Time.deltaTime;
     }
 
     private void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "AircraftFuselage")
-        {
-            col.gameObject.GetComponent<PlaneController>().life -= 5f;
-        }
-
-        if(col.gameObject.name == "Enemy(Clone)" || col.gameObject.name == "Enemy")
-        {
-            col.gameObject.GetComponent<EnemyBehaviour>().life -= 10f;
-        }
-
         Destroy(this.gameObject);
     }
 }

@@ -7,6 +7,10 @@ public class GameManager : MonoBehaviour
 {
     public bool GameOver;
 
+    int score;
+
+    int killedEnemyAmount;
+
     private static GameManager instance;
 
     public static GameManager Get()
@@ -26,27 +30,63 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Update()
+    void Start()
     {
-        if(Input.GetKeyUp(KeyCode.H))
-        {
-            SetIG(true);
-        }
+        UIMenuCanvas.QuitGame = QuitGame;
+        UIMenuCanvas.PlayGame = SetIG;
+        PlaneController.GameOver = SetGO;
+        EnemyBehaviour.KillEnemy += AddScore;
+        EnemyBehaviour.KillEnemy += UpdateKEAmount;
     }
 
-    public void SetGO(bool g)
+    void OnDestroy()
     {
-        GameOver = g;
+        EnemyBehaviour.KillEnemy -= AddScore;
+        EnemyBehaviour.KillEnemy -= UpdateKEAmount;
+    }
+
+    void AddScore()
+    {
+        score += 50;
+    }
+
+    void UpdateKEAmount()
+    {
+        killedEnemyAmount++;
+    }
+
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public int GetKEAmount()
+    {
+        return killedEnemyAmount;
+    }
+
+    public void SetGO()
+    {
+        GameOver = true;
         SceneManager.LoadScene("GameOver");
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void SetIG(bool g)
+    public void SetIG()
     {
-        GameOver = g;
+        GameOver = false;
         SceneManager.LoadScene("Game");
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
     }
 }

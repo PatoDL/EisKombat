@@ -4,39 +4,51 @@ using UnityEngine;
 
 public class PlaneController : MonoBehaviour
 {
-    [SerializeField] private float value;
-    [SerializeField] private float planeSpeed;
-    [SerializeField] private Rigidbody rig;
-    [SerializeField] private float yaw, pitch, vSpeed, hSpeed;
-    [SerializeField] private float bulletSpeed;
     public float life;
+    public float rotationValue;
+    public float planeSpeed;
+    public Rigidbody rig;
+    public float yaw, pitch, vSpeed, hSpeed;
+    public float fuel;
+    bool accelerate = true;
+
+    public float bulletSpeed;
+    public GameObject bulletShooter;
     public GameObject bulletPF;
     private float bulletTimer = 0f;
-    bool accelerate = true;
+
+    const float minAltitude = 8f;
+
+    public GameObject explosionPF;
+
+    public float gravityScale;
+
+    public delegate void OnGameOver();
+    public static OnGameOver GameOver;
 
     void Start()
     {
         rig = GetComponent<Rigidbody>();
-        value = 0.5f;
-        planeSpeed = 100;
+        rotationValue = 0.5f;
+        planeSpeed = 10f;
         yaw = 0.0f;
         pitch = 0.0f;
-        vSpeed = 2.0f;
-        hSpeed = 2.0f;
+        vSpeed = 0.8f;
+        hSpeed = 0.8f;
         life = 100f;
-        bulletSpeed = 1950;
+        bulletSpeed = 1000f;
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(0, 0, value);
+            transform.Rotate(0, 0, rotationValue);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(0, 0, -value);
+            transform.Rotate(0, 0, -rotationValue);
         }
 
         if(Input.GetMouseButton(0))
@@ -44,68 +56,98 @@ public class PlaneController : MonoBehaviour
             Shoot();
         }
 
-        if(Input.GetKeyUp(KeyCode.W))
-        {
-            accelerate = true;
-        }
+        yaw = hSpeed * Input.GetAxis("Mouse X");
+        pitch = vSpeed * Input.GetAxis("Mouse Y");
 
-        yaw += hSpeed * Input.GetAxis("Mouse X");
-        pitch -= vSpeed * Input.GetAxis("Mouse Y");
+        transform.eulerAngles += transform.up * yaw;
+        transform.eulerAngles -= transform.right * pitch;
 
-        if(pitch<-36)
+        if (transform.position.y < minAltitude)
         {
-            pitch = -36;
+            PlaneDeath();
         }
-        if(pitch>50)
-        {
-            pitch = 50;
-        }
+    }
 
-        transform.eulerAngles = new Vector3(pitch, yaw, transform.rotation.eulerAngles.z);
-
-        if (transform.position.y < 18.67f)
-        {
-            transform.position = new Vector3(transform.position.x, 18.67f, transform.position.z);
-        }
-
-        if(life<=0f)
-        {
-            Destroy(this.gameObject);
-        }
+    void PlaneDeath()
+    {
+        GameObject cam = Instantiate(transform.Find("Main Camera").gameObject);
+        cam.transform.position = transform.position - transform.forward * 5f;
+        cam.transform.LookAt(transform);
+        GameObject exp = Instantiate(explosionPF);
+        exp.transform.position = transform.position;
+        Destroy(this.gameObject);
+        GameOver();
     }
 
     void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.W))
         {
+            ForceMode fm;
+
             if (accelerate)
             {
-                rig.AddForce(transform.forward * planeSpeed, ForceMode.Acceleration);
+                fm = ForceMode.Acceleration;
                 accelerate = false;
             }
             else
             {
-                rig.AddForce(transform.forward * planeSpeed, ForceMode.Force);
+                fm = ForceMode.Force;
+                fuel -= Time.fixedDeltaTime;
+                if (fuel <= 0)
+                    PlaneDeath();
+                gravityScale -= Time.fixedDeltaTime;
+                if (gravityScale < 0)
+                    gravityScale = 0;
             }
+            
+            rig.AddForce(transform.forward * planeSpeed, fm);
         }
-
+        else
+        {
+            accelerate = true;
+            gravityScale += Time.fixedDeltaTime;
+            if (gravityScale > 2)
+                gravityScale = 2;
+        }
 
         if (Input.GetKey(KeyCode.S))
         {
-            rig.AddForce(-transform.forward * planeSpeed, ForceMode.Force);
+            if (rig.velocity.z > 0)
+                rig.velocity -= new Vector3(0, 0, Time.fixedDeltaTime);
+            else
+                rig.velocity = new Vector3(rig.velocity.x, rig.velocity.y, 0f);
         }
+
+        rig.AddForce(Vector3.down * gravityScale, ForceMode.Force);
     }
 
     void Shoot()
     {
         bulletTimer += Time.deltaTime;
-        if (bulletTimer > 0.5f)
+        if (bulletTimer > 0.1f)
         {
             GameObject bullet = Instantiate(bulletPF);
-            bullet.transform.position = transform.position + transform.forward * 10;
-            bullet.transform.rotation = transform.rotation;
-            bullet.GetComponentInChildren<Rigidbody>().AddForce((bullet.transform.forward+transform.forward) * (bulletSpeed + planeSpeed), ForceMode.Force);
+            bullet.transform.position = bulletShooter.transform.position;
+            bullet.transform.rotation = bulletShooter.transform.rotation;
+            bullet.GetComponentInChildren<Rigidbody>().AddForce(bullet.transform.forward * bulletSpeed, ForceMode.Force);
             bulletTimer = 0f;
+        }
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if(col.gameObject.tag=="Bullet")
+        {
+            life -= 5f;
+            if(life<=0f)
+            {
+                PlaneDeath();
+            }
+        }
+        else
+        {
+            PlaneDeath();
         }
     }
 }
